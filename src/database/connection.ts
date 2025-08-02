@@ -15,8 +15,7 @@ export class DuckDBConnection {
       const dbPath = this.config.isDirectory ? ':memory:' : this.config.path;
       
       this.db = new Database(dbPath, {
-        access_mode: 'read_only',
-        threads: '4'
+        access_mode: 'read_only'
       }, (err) => {
         if (err) {
           reject(new Error(`Failed to connect to DuckDB: ${err.message}`));
