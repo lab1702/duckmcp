@@ -16,7 +16,7 @@ export class DuckDBConnection {
       
       this.db = new Database(dbPath, {
         access_mode: 'read_only',
-        threads: 4
+        threads: '4'
       }, (err) => {
         if (err) {
           reject(new Error(`Failed to connect to DuckDB: ${err.message}`));

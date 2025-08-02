@@ -13,11 +13,11 @@ import { MetadataTools, QueryTools, SummarizeTools } from './tools/index.js';
 
 class DuckDBMCPServer {
   private server: Server;
-  private connection: DuckDBConnection;
-  private loader: DataLoader;
-  private metadataTools: MetadataTools;
-  private queryTools: QueryTools;
-  private summarizeTools: SummarizeTools;
+  private connection!: DuckDBConnection;
+  private loader!: DataLoader;
+  private metadataTools!: MetadataTools;
+  private queryTools!: QueryTools;
+  private summarizeTools!: SummarizeTools;
 
   constructor() {
     this.server = new Server(
