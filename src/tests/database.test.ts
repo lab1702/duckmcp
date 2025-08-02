@@ -1,5 +1,5 @@
-import { DataLoader } from '../src/database/loader';
-import { DuckDBConnection } from '../src/database/connection';
+import { DataLoader } from '../database/loader';
+import { DuckDBConnection } from '../database/connection';
 import * as path from 'path';
 import * as fs from 'fs';
 

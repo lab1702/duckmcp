@@ -7,7 +7,7 @@ export class SummarizeTools {
   async summarizeTable(tableName: string): Promise<SummaryResult[]> {
     // Use DuckDB's SUMMARIZE function
     const sql = `SUMMARIZE "${tableName}"`;
-    
+
     try {
       const rows = await this.connection.query<{
         column_name: string;
@@ -36,7 +36,7 @@ export class SummarizeTools {
         q50: row.q50,
         q75: row.q75,
         count: row.count,
-        null_percentage: row.null_percentage
+        null_percentage: row.null_percentage,
       }));
     } catch (error) {
       throw new Error(`Failed to summarize table "${tableName}": ${(error as Error).message}`);
@@ -84,47 +84,47 @@ export class SummarizeTools {
     for (const col of summary) {
       output += `Column: ${col.column_name} (${col.column_type})\n`;
       output += '-'.repeat(30) + '\n';
-      
+
       if (col.count !== undefined) {
         output += `Count: ${col.count}\n`;
       }
-      
+
       if (col.null_percentage !== undefined) {
         output += `Null %: ${col.null_percentage.toFixed(2)}%\n`;
       }
-      
+
       if (col.approx_unique !== undefined) {
         output += `Unique: ${col.approx_unique}\n`;
       }
-      
+
       if (col.min !== undefined && col.min !== null) {
         output += `Min: ${col.min}\n`;
       }
-      
+
       if (col.max !== undefined && col.max !== null) {
         output += `Max: ${col.max}\n`;
       }
-      
+
       if (col.avg !== undefined && col.avg !== null) {
         output += `Avg: ${col.avg.toFixed(2)}\n`;
       }
-      
+
       if (col.std !== undefined && col.std !== null) {
         output += `Std: ${col.std.toFixed(2)}\n`;
       }
-      
+
       if (col.q25 !== undefined && col.q25 !== null) {
         output += `Q25: ${col.q25}\n`;
       }
-      
+
       if (col.q50 !== undefined && col.q50 !== null) {
         output += `Median: ${col.q50}\n`;
       }
-      
+
       if (col.q75 !== undefined && col.q75 !== null) {
         output += `Q75: ${col.q75}\n`;
       }
-      
+
       output += '\n';
     }
 

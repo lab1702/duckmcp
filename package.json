@@ -13,26 +13,34 @@
     "start": "node dist/index.js",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": ["mcp", "duckdb", "sql", "database", "data"],
+  "keywords": [
+    "mcp",
+    "duckdb",
+    "sql",
+    "database",
+    "data"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.6.0",
-    "duckdb": "^1.0.0",
     "commander": "^12.1.0",
+    "duckdb": "^1.0.0",
     "glob": "^10.4.5"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
-    "typescript": "^5.7.2",
-    "tsx": "^4.19.2",
+    "@eslint/js": "^9.32.0",
     "@types/jest": "^29.5.14",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
+    "@types/node": "^22.10.2",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
-    "eslint": "^9.16.0"
+    "eslint": "^9.16.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   }
 }

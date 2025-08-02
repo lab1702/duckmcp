@@ -13,9 +13,9 @@ export class DuckDBConnection {
     return new Promise((resolve, reject) => {
       // Configure DuckDB in readonly mode for safety
       const dbPath = this.config.isDirectory ? ':memory:' : this.config.path;
-      
+
       this.db = new Database(dbPath, {
-        access_mode: 'read_only'
+        access_mode: 'read_only',
       }, (err) => {
         if (err) {
           reject(new Error(`Failed to connect to DuckDB: ${err.message}`));
@@ -59,7 +59,7 @@ export class DuckDBConnection {
   }
 
   async close(): Promise<void> {
-    if (!this.db) return;
+    if (!this.db) {return;}
 
     return new Promise((resolve, reject) => {
       this.db!.close((err) => {

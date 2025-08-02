@@ -29,7 +29,7 @@ class DuckDBMCPServer {
         capabilities: {
           tools: {},
         },
-      }
+      },
     );
 
     this.setupToolHandlers();
@@ -39,7 +39,7 @@ class DuckDBMCPServer {
     try {
       // Detect if path is directory or database file
       const config = await DataLoader.detectPathType(dataPath);
-      
+
       // Initialize connection
       this.connection = new DuckDBConnection(config);
       await this.connection.connect();
@@ -149,86 +149,86 @@ class DuckDBMCPServer {
 
       try {
         switch (name) {
-          case 'get_tables': {
-            const tables = await this.metadataTools.getTables();
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify(tables, null, 2),
-                },
-              ],
-            };
-          }
+        case 'get_tables': {
+          const tables = await this.metadataTools.getTables();
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(tables, null, 2),
+              },
+            ],
+          };
+        }
 
-          case 'get_schema': {
-            const { table_name } = args as { table_name: string };
-            const schema = await this.metadataTools.getTableSchema(table_name);
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify(schema, null, 2),
-                },
-              ],
-            };
-          }
+        case 'get_schema': {
+          const { table_name } = args as { table_name: string };
+          const schema = await this.metadataTools.getTableSchema(table_name);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(schema, null, 2),
+              },
+            ],
+          };
+        }
 
-          case 'describe_table': {
-            const { table_name } = args as { table_name: string };
-            const description = await this.metadataTools.describeTable(table_name);
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify(description, null, 2),
-                },
-              ],
-            };
-          }
+        case 'describe_table': {
+          const { table_name } = args as { table_name: string };
+          const description = await this.metadataTools.describeTable(table_name);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(description, null, 2),
+              },
+            ],
+          };
+        }
 
-          case 'execute_query': {
-            const { sql, limit = 100 } = args as { sql: string; limit?: number };
-            const result = await this.queryTools.executeQuery(sql);
-            const formatted = this.queryTools.formatResults(result, limit);
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: formatted,
-                },
-              ],
-            };
-          }
+        case 'execute_query': {
+          const { sql, limit = 100 } = args as { sql: string; limit?: number };
+          const result = await this.queryTools.executeQuery(sql);
+          const formatted = this.queryTools.formatResults(result, limit);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: formatted,
+              },
+            ],
+          };
+        }
 
-          case 'summarize_table': {
-            const { table_name } = args as { table_name: string };
-            const summary = await this.summarizeTools.summarizeTable(table_name);
-            const formatted = this.summarizeTools.formatSummary(summary);
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: formatted,
-                },
-              ],
-            };
-          }
+        case 'summarize_table': {
+          const { table_name } = args as { table_name: string };
+          const summary = await this.summarizeTools.summarizeTable(table_name);
+          const formatted = this.summarizeTools.formatSummary(summary);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: formatted,
+              },
+            ],
+          };
+        }
 
-          case 'get_database_info': {
-            const info = await this.metadataTools.getDatabaseInfo();
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify(info, null, 2),
-                },
-              ],
-            };
-          }
+        case 'get_database_info': {
+          const info = await this.metadataTools.getDatabaseInfo();
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(info, null, 2),
+              },
+            ],
+          };
+        }
 
-          default:
-            throw new Error(`Unknown tool: ${name}`);
+        default:
+          throw new Error(`Unknown tool: ${name}`);
         }
       } catch (error) {
         return {
@@ -259,7 +259,7 @@ class DuckDBMCPServer {
 
 async function main(): Promise<void> {
   const program = new Command();
-  
+
   program
     .name('duckmcp')
     .description('DuckDB MCP Server - Query databases and data files via MCP')
@@ -267,13 +267,13 @@ async function main(): Promise<void> {
     .argument('<path>', 'Path to DuckDB database file or directory containing data files')
     .action(async (path: string) => {
       const server = new DuckDBMCPServer();
-      
+
       // Handle cleanup on exit
       process.on('SIGINT', async () => {
         await server.cleanup();
         process.exit(0);
       });
-      
+
       process.on('SIGTERM', async () => {
         await server.cleanup();
         process.exit(0);

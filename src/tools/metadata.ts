@@ -24,7 +24,7 @@ export class MetadataTools {
     return rows.map(row => ({
       name: row.name,
       schema: row.schema,
-      type: row.type === 'BASE TABLE' ? 'TABLE' : 'VIEW'
+      type: row.type === 'BASE TABLE' ? 'TABLE' : 'VIEW',
     }));
   }
 
@@ -51,12 +51,12 @@ export class MetadataTools {
       name: row.name,
       type: row.type,
       nullable: row.nullable === 'YES',
-      default_value: row.default_value || undefined
+      default_value: row.default_value || undefined,
     }));
 
     return {
       table_name: tableName,
-      columns
+      columns,
     };
   }
 
@@ -75,7 +75,7 @@ export class MetadataTools {
 
     return {
       schema,
-      rowCount
+      rowCount,
     };
   }
 
@@ -97,7 +97,7 @@ export class MetadataTools {
       version,
       tables,
       totalTables: tables.length,
-      readonly: this.connection.getConfig().readonly
+      readonly: this.connection.getConfig().readonly,
     };
   }
 }

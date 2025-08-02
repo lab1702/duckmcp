@@ -6,7 +6,7 @@ export class QueryTools {
 
   async executeQuery(sql: string): Promise<QueryResult> {
     const startTime = Date.now();
-    
+
     try {
       const rows = await this.connection.query(sql);
       const executionTime = Date.now() - startTime;
@@ -16,23 +16,23 @@ export class QueryTools {
           columns: [],
           rows: [],
           rowCount: 0,
-          executionTime
+          executionTime,
         };
       }
 
       // Extract column names from the first row
       const columns = Object.keys(rows[0]);
-      
+
       // Convert rows to array format
-      const arrayRows = rows.map(row => 
-        columns.map(col => row[col])
+      const arrayRows = rows.map(row =>
+        columns.map(col => row[col]),
       );
 
       return {
         columns,
         rows: arrayRows,
         rowCount: rows.length,
-        executionTime
+        executionTime,
       };
     } catch (error) {
       // Re-throw with execution time for consistency
@@ -52,9 +52,9 @@ export class QueryTools {
       await this.explainQuery(sql);
       return { valid: true };
     } catch (error) {
-      return { 
-        valid: false, 
-        error: (error as Error).message 
+      return {
+        valid: false,
+        error: (error as Error).message,
       };
     }
   }
@@ -70,26 +70,26 @@ export class QueryTools {
     // Calculate column widths
     const colWidths = result.columns.map((col, i) => {
       const dataWidth = Math.max(
-        ...displayRows.map(row => String(row[i] || '').length)
+        ...displayRows.map(row => String(row[i] || '').length),
       );
       return Math.max(col.length, dataWidth, 3); // minimum width of 3
     });
 
     // Build table
     let output = '';
-    
+
     // Header
     const header = result.columns
       .map((col, i) => col.padEnd(colWidths[i]))
       .join(' | ');
     output += header + '\n';
-    
+
     // Separator
     const separator = colWidths
       .map(width => '-'.repeat(width))
       .join('-|-');
     output += separator + '\n';
-    
+
     // Data rows
     for (const row of displayRows) {
       const rowStr = row
@@ -102,7 +102,7 @@ export class QueryTools {
     if (hasMore) {
       output += `\n... and ${result.rowCount - limit} more rows\n`;
     }
-    
+
     output += `\n${result.rowCount} rows`;
     if (result.executionTime) {
       output += ` (${result.executionTime}ms)`;

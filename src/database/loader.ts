@@ -43,31 +43,31 @@ export class DataLoader {
   }
 
   private async createTableForFileType(
-    fileType: string, 
-    basePath: string, 
-    files: string[]
+    fileType: string,
+    basePath: string,
+    files: string[],
   ): Promise<void> {
     const tableName = this.generateTableName(basePath, fileType);
-    
+
     // Use glob pattern for DuckDB to handle all files at once
     // This supports HIVE partitioning automatically
     const globPattern = path.join(basePath, `**/*.${fileType}`);
-    
+
     let sql: string;
-    
+
     switch (fileType) {
-      case 'csv':
-        sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_csv('${globPattern}', auto_detect=true, hive_partitioning=true)`;
-        break;
-      case 'parquet':
-        sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_parquet('${globPattern}', hive_partitioning=true)`;
-        break;
-      case 'json':
-      case 'jsonl':
-        sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_json('${globPattern}', auto_detect=true, hive_partitioning=true)`;
-        break;
-      default:
-        throw new Error(`Unsupported file type: ${fileType}`);
+    case 'csv':
+      sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_csv('${globPattern}', auto_detect=true, hive_partitioning=true)`;
+      break;
+    case 'parquet':
+      sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_parquet('${globPattern}', hive_partitioning=true)`;
+      break;
+    case 'json':
+    case 'jsonl':
+      sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_json('${globPattern}', auto_detect=true, hive_partitioning=true)`;
+      break;
+    default:
+      throw new Error(`Unsupported file type: ${fileType}`);
     }
 
     try {
@@ -88,12 +88,12 @@ export class DataLoader {
   static async detectPathType(inputPath: string): Promise<DatabaseConfig> {
     try {
       const stats = await fs.promises.stat(inputPath);
-      
+
       if (stats.isDirectory()) {
         return {
           path: inputPath,
           isDirectory: true,
-          readonly: true
+          readonly: true,
         };
       } else if (stats.isFile()) {
         // Check if it's a DuckDB database file
@@ -102,7 +102,7 @@ export class DataLoader {
           return {
             path: inputPath,
             isDirectory: false,
-            readonly: true
+            readonly: true,
           };
         } else {
           throw new Error(`Unsupported file type: ${ext}. Use .db, .duckdb, or specify a directory.`);
