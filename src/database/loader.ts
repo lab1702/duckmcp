@@ -29,9 +29,26 @@ export class DataLoader {
 
     for (const ext of supportedExtensions) {
       try {
-        // Use HIVE-style pattern to support partitioned data
-        const pattern = path.join(dataPath, `**/*.${ext}`);
-        const files = await glob(pattern);
+        // Use both recursive and non-recursive patterns
+        const patterns = [
+          path.join(dataPath, `*.${ext}`),
+          path.join(dataPath, `**/*.${ext}`)
+        ];
+        
+        let files: string[] = [];
+        for (const pattern of patterns) {
+          try {
+            const foundFiles = await glob(pattern.replace(/\\/g, '/'));
+            files = files.concat(foundFiles);
+          } catch (err) {
+            console.warn(`Pattern ${pattern} failed:`, err);
+          }
+        }
+        
+        // Remove duplicates
+        files = [...new Set(files)];
+        
+        console.log(`Found ${files.length} ${ext} files:`, files);
 
         if (files.length > 0) {
           await this.createTableForFileType(ext, dataPath, files);
@@ -51,7 +68,8 @@ export class DataLoader {
 
     // Use glob pattern for DuckDB to handle all files at once
     // This supports HIVE partitioning automatically
-    const globPattern = path.join(basePath, `**/*.${fileType}`);
+    // Convert Windows paths to forward slashes for DuckDB
+    const globPattern = path.join(basePath, `**/*.${fileType}`).replace(/\\/g, '/');
 
     let sql: string;
 
@@ -71,10 +89,71 @@ export class DataLoader {
     }
 
     try {
+      console.log(`Attempting to create table '${tableName}' with SQL: ${sql}`);
       await this.connection.execute(sql);
       console.log(`Created table '${tableName}' for ${files.length} ${fileType} files`);
     } catch (error) {
       console.warn(`Warning: Failed to create table '${tableName}':`, error);
+      // Try fallback approach - create table for individual files
+      await this.createTableForIndividualFiles(tableName, fileType, files);
+    }
+  }
+
+  private async createTableForIndividualFiles(
+    tableName: string,
+    fileType: string,
+    files: string[],
+  ): Promise<void> {
+    console.log(`Trying fallback approach for ${tableName} with individual files`);
+    
+    // Convert Windows paths to forward slashes for DuckDB
+    const normalizedFiles = files.map(f => f.replace(/\\/g, '/'));
+    
+    let sql: string;
+    
+    if (normalizedFiles.length === 1) {
+      // Single file approach
+      const filePath = normalizedFiles[0];
+      switch (fileType) {
+      case 'csv':
+        sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_csv('${filePath}', auto_detect=true)`;
+        break;
+      case 'parquet':
+        sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_parquet('${filePath}')`;
+        break;
+      case 'json':
+      case 'jsonl':
+        sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_json('${filePath}', auto_detect=true)`;
+        break;
+      default:
+        throw new Error(`Unsupported file type: ${fileType}`);
+      }
+    } else {
+      // Multiple files - use array syntax
+      const fileList = normalizedFiles.map(f => `'${f}'`).join(', ');
+      switch (fileType) {
+      case 'csv':
+        sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_csv([${fileList}], auto_detect=true)`;
+        break;
+      case 'parquet':
+        sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_parquet([${fileList}])`;
+        break;
+      case 'json':
+      case 'jsonl':
+        sql = `CREATE VIEW ${tableName} AS SELECT * FROM read_json([${fileList}], auto_detect=true)`;
+        break;
+      default:
+        throw new Error(`Unsupported file type: ${fileType}`);
+      }
+    }
+    
+    try {
+      console.log(`Fallback SQL: ${sql}`);
+      await this.connection.execute(sql);
+      console.log(`Successfully created table '${tableName}' using fallback approach`);
+    } catch (error) {
+      console.error(`Failed to create table '${tableName}' even with fallback:`, error);
+      throw error;
     }
   }
 

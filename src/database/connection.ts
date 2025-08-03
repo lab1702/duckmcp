@@ -12,11 +12,15 @@ export class DuckDBConnection {
 
   async connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      // Configure DuckDB in readonly mode for safety
+      // Configure DuckDB
       const dbPath = this.config.isDirectory ? ':memory:' : this.config.path;
+      
+      // For directory mode, we need read-write access to create tables/views
+      // For database file mode, use read-only for safety
+      const accessMode = this.config.isDirectory ? 'read_write' : 'read_only';
 
       this.db = new Database(dbPath, {
-        access_mode: 'read_only',
+        access_mode: accessMode,
       }, (err: any) => {
         if (err) {
           reject(new Error(`Failed to connect to DuckDB: ${err.message}`));
@@ -33,13 +37,24 @@ export class DuckDBConnection {
     }
 
     return new Promise((resolve, reject) => {
-      this.db!.all(sql, params, (err: any, rows: any) => {
-        if (err) {
-          reject(new Error(`Query failed: ${err.message}`));
-        } else {
-          resolve(rows as T[]);
-        }
-      });
+      if (params.length === 0) {
+        // For queries without parameters, use simplified call
+        this.db!.all(sql, (err: any, rows: any) => {
+          if (err) {
+            reject(new Error(`Query failed: ${err.message}`));
+          } else {
+            resolve(rows as T[]);
+          }
+        });
+      } else {
+        this.db!.all(sql, params, (err: any, rows: any) => {
+          if (err) {
+            reject(new Error(`Query failed: ${err.message}`));
+          } else {
+            resolve(rows as T[]);
+          }
+        });
+      }
     });
   }
 
@@ -49,13 +64,24 @@ export class DuckDBConnection {
     }
 
     return new Promise((resolve, reject) => {
-      this.db!.run(sql, params, (err: any) => {
-        if (err) {
-          reject(new Error(`Execution failed: ${err.message}`));
-        } else {
-          resolve();
-        }
-      });
+      if (params.length === 0) {
+        // For execution without parameters, use simplified call
+        this.db!.run(sql, (err: any) => {
+          if (err) {
+            reject(new Error(`Execution failed: ${err.message}`));
+          } else {
+            resolve();
+          }
+        });
+      } else {
+        this.db!.run(sql, params, (err: any) => {
+          if (err) {
+            reject(new Error(`Execution failed: ${err.message}`));
+          } else {
+            resolve();
+          }
+        });
+      }
     });
   }
 

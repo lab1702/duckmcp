@@ -1,0 +1,13 @@
+id,name,email,city,notes
+1,"John ""Johnny"" Doe",john@example.com,New York,"Has nickname in quotes"
+2,Jane Smith,jane@example.com,"San Francisco, CA","City with comma"
+3,"O'Connor, Patrick",patrick@example.com,Boston,"Apostrophe and comma in name"
+4,María González,maria@example.com,México City,"International characters: ñ, í, é"
+5,,empty@example.com,Unknown,"Empty name field"
+6,"Line
+Break User",linebreak@example.com,Portland,"Name contains
+actual line break"
+7,"Tab	Separated",tab@example.com,Seattle,"Name contains	tab character"
+8,"Multiple  ""Quotes""  Test",quotes@example.com,Denver,"Multiple quotes test"
+9,"Trailing Space ",space@example.com,Austin,"Name has trailing space"
+10,"Null Value Test",null@test.com,,"Empty city field"

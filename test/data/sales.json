@@ -1,0 +1,98 @@
+[
+  {
+    "sale_id": 1001,
+    "date": "2024-01-15",
+    "customer": {
+      "id": 501,
+      "name": "Acme Corp",
+      "type": "business",
+      "contact": {
+        "email": "orders@acme.com",
+        "phone": "+1-555-0123"
+      }
+    },
+    "items": [
+      {
+        "product_id": "P001",
+        "name": "Widget A",
+        "quantity": 10,
+        "unit_price": 25.50,
+        "total": 255.00
+      },
+      {
+        "product_id": "P002", 
+        "name": "Widget B",
+        "quantity": 5,
+        "unit_price": 45.75,
+        "total": 228.75
+      }
+    ],
+    "total_amount": 483.75,
+    "payment_method": "credit_card",
+    "status": "completed"
+  },
+  {
+    "sale_id": 1002,
+    "date": "2024-01-16",
+    "customer": {
+      "id": 502,
+      "name": "Jane Smith",
+      "type": "individual",
+      "contact": {
+        "email": "jane.smith@email.com",
+        "phone": "+1-555-0456"
+      }
+    },
+    "items": [
+      {
+        "product_id": "P003",
+        "name": "Premium Widget",
+        "quantity": 2,
+        "unit_price": 89.99,
+        "total": 179.98
+      }
+    ],
+    "total_amount": 179.98,
+    "payment_method": "paypal",
+    "status": "completed"
+  },
+  {
+    "sale_id": 1003,
+    "date": "2024-01-17",
+    "customer": {
+      "id": 503,
+      "name": "Tech Solutions Inc",
+      "type": "business",
+      "contact": {
+        "email": "procurement@techsolutions.com",
+        "phone": "+1-555-0789"
+      }
+    },
+    "items": [
+      {
+        "product_id": "P001",
+        "name": "Widget A", 
+        "quantity": 25,
+        "unit_price": 25.50,
+        "total": 637.50
+      },
+      {
+        "product_id": "P004",
+        "name": "Deluxe Widget",
+        "quantity": 3,
+        "unit_price": 125.00,
+        "total": 375.00
+      },
+      {
+        "product_id": "P002",
+        "name": "Widget B",
+        "quantity": 8,
+        "unit_price": 45.75,
+        "total": 366.00
+      }
+    ],
+    "total_amount": 1378.50,
+    "payment_method": "invoice",
+    "status": "pending"
+  }
+]
